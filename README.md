@@ -1,4 +1,4 @@
-# wilddet3d-inference
+# WildDet3D Inference
 
 Local, device-agnostic inference for [WildDet3D](https://github.com/allenai/WildDet3D).
 Runs on Apple Silicon (MPS), NVIDIA GPU (CUDA), or CPU — without modifying upstream

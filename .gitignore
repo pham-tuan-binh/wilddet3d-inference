@@ -1,0 +1,31 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+.DS_Store
+
+# Model checkpoints (large)
+ckpt/
+*.pt
+*.ckpt
+*.safetensors
+*.mlpackage/
+*.mlmodel
+*.onnx
+
+# Outputs
+outputs/
+*.png
+*.jpg
+*.jpeg
+!assets/**
+
+# IDE
+.vscode/
+.idea/

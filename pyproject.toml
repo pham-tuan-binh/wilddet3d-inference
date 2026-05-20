@@ -1,0 +1,90 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wilddet3d-inference"
+version = "0.1.0"
+description = "Device-agnostic local inference for WildDet3D (Mac MPS, CUDA, CPU)."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "SAM-License" }
+authors = [{ name = "binh.pham" }]
+dependencies = [
+    "torch==2.5.1",
+    "torchvision==0.20.1",
+    "numpy<2.0.0",
+    "pillow",
+    "opencv-python-headless",
+    "scipy",
+    "einops",
+    "timm>=0.6.0",
+    "transformers",
+    "huggingface_hub",
+    "safetensors",
+    "ftfy",
+    "regex",
+    "iopath",
+    "open_clip_torch",
+    "pycocotools",
+    "pygltflib",
+    "trimesh",
+    # `utils3d` here is EasternJournalist/utils3d (NOT the unrelated
+    # PyPI stub of the same name). Pinned as a direct URL so it
+    # resolves correctly when this package is installed from git via
+    # pip/uv without relying on [tool.uv.sources] in a parent project.
+    # Upstream wilddet3d depends on it at runtime
+    # (wilddet3d/depth/lingbot_backend.py).
+    "utils3d @ git+https://github.com/EasternJournalist/utils3d.git",
+    "ml_collections==1.1.0",
+    "cloudpickle",
+    "devtools",
+    "termcolor",
+    "terminaltables",
+    "jsonargparse[signatures]",
+    "lightning",
+    "h5py",
+    "tqdm",
+    "vis4d==1.0.0",
+    "rerun-sdk>=0.20",
+    "pyyaml",
+    # sam3/model_builder.py still imports pkg_resources, which was
+    # removed from setuptools 80+. Pin below that.
+    "setuptools<80",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+wilddet3d-detect = "wilddet3d_inference.cli:main"
+wilddet3d-quantize = "wilddet3d_inference.quantize:cli"
+wilddet3d-benchmark = "wilddet3d_inference.benchmark:main"
+
+[tool.setuptools.packages.find]
+include = ["wilddet3d_inference*"]
+
+# ---------- uv ----------
+# torch + torchvision: Mac uses default PyPI wheels (MPS-capable);
+# Linux pulls from the CUDA-12.1 index defined below.
+[tool.uv]
+required-version = ">=0.5.0"
+# vis4d==1.0.0 pins pydantic<2; rerun-sdk and other modern deps need
+# pydantic>=2. The bits of pydantic that vis4d actually touches work
+# on v2 in practice, so override the upper bound.
+override-dependencies = [
+    "pydantic>=2.0",
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu121", marker = "sys_platform == 'linux'" },
+]
+torchvision = [
+    { index = "pytorch-cu121", marker = "sys_platform == 'linux'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
